@@ -1,17 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const path= require('path');
+const getProduct= require('../controllers/product');
 
-router.get('/add-product',(req, res, next) => {
-    res.sendFile(path.join(__dirname,"../","/View","/product.html"));
-      
-});
+router.get('/add-product',getProduct.getAddProduct);
    
 
-router.post('/contact-Us',(req,res,next)=>{
-    console.log("bjhfhjs");
-       res.sendFile(path.join(__dirname,"../","/View","/contactUs.html"));
-   });
+router.post('/contact-Us',getProduct.postAddProduct);
 
 
 

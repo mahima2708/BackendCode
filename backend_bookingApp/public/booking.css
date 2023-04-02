@@ -1,0 +1,28 @@
+body {
+    
+background:url(C:/Users/paritosh/Downloads/appoint.jpg) ;
+background-size:cover;
+padding: 40px;
+margin: auto;
+}
+
+#form-format{
+border: 2px solid orangered;
+width:50% ;
+padding : 10px;
+
+}
+
+
+/* form{
+    padding-block: 10px;
+    margin: 10px;
+    text-align: center;
+}
+
+div {
+    margin-top: 5px;
+    padding: 5px;
+    text-align: center-left;
+} */
+

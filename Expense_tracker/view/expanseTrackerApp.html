@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="tracker.css">
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+</head>
+<body>
+    <div class="row">
+        <div class="mx-auto col-8 col-md-6 col-lg-4">
+          <form action="/" method="POST" class ="mx-auto" id = "formText">
+            <h1>ExpenseTracker App</h1>
+            <h4>Add Details</h4>
+            <div class="form-group">
+                <label for="month" name="month">Month</label>
+                <input type="text" id="month" class ="form-control" name="month">
+            </div>
+         <div class="form-group">
+            <label for="payment_type" name="mode">ModeOfPayement</label>
+            <select name="payment" id="mode" class ="form-control">
+                <option value="none"> </option>
+                <option value="credit">Credit</option>
+                <option value="debit">Debit</option>
+                <option value="online">OnlineBanking</option>
+                <option value="cash">Cash</option>
+              </select>
+        </div>
+        <div class="form-group">
+          <label for="category" name="typeOfProduct">Category</label>
+          <select name="category" id="type" class ="form-control">
+            <option value="none"> </option>
+            <option value="clothing">Clothes</option>
+            <option value="accessories">Accessories</option>
+            <option value="electronics">Electronics</option>
+            <option value="grocery">Grocery</option>
+            <option value="selfcare">SkincareHaircare</option>
+            <option value="others">Others</option>
+          </select>
+          <input type="text" id="product" name="product" class ="form-control" placeholder="NameOfProduct">
+        </div>
+        <div class="form-group">
+            <label for="amount" name="cost">CostOfProduct</label>
+            <input type="text" id="cost" name ="amount" class ="form-control">
+        </div>
+            <button  onclick="hello(event)" class="btn btn-primary btn-customized mt-4">SaveDetails</button>  
+        
+      </form>
+        </div>
+    </div>
+      <ul id="list"></ul>
+
+    <!--<ul class="listVal">
+     <li class="item">Item 1</li>
+     <li class="item">Item 2</li>
+     <li class="item">Item 3</li>
+   </ul>--> 
+   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+       function hello(event){
+       event.preventDefault()
+    console.log(event.target.form.product.value)
+        const month = event.target.form.month.value;
+        const payment = event.target.form.mode.value;
+        const category = event.target.form.type.value;
+        const product = event.target.form.product.value;
+        const amount = event.target.form.cost.value;
+        
+        const obj = {
+          month,
+          payment,
+          category,
+          product,
+          amount
+        }
+        //console.log(obj);
+        axios.post("http://localhost:3000",obj).then((response)=>{
+         //console.log(response.data.newEntryInserted);
+         showUser(response.data.newEntryInserted);
+
+        }).catch((err)=>{
+        document.body.innerHTML = document.body.innerHTML + "<h3> Something Went Wrong </h3>";
+       console.log(err)});
+       }
+
+       function showUser(data){
+        console.log("&&",data);
+    user ={
+      id: '',
+      month: '',
+      payement: '',
+      category: '',
+      product: '',
+      amount: ''
+    }
+    document.getElementById('month').value= "";
+      document.getElementById('mode').value= "";
+      document.getElementById('type').value="";
+      document.getElementById('product').value="";
+      document.getElementById('cost').value="";
+      if(localStorage.getItem(data.date) != null){
+        removeUserFromScreen(data.date);
+      }
+      const firstNode = document.getElementById('list');
+      const inputData= `<li id=${data.id}> ${data.monthval} - ${data.payment} - ${data.category} - ${data.product} - ${data.amount}>
+                             <button onclick="deleteUser('${data.id}')">Delete user</button>
+                             <button onclick="editDetails('${data.id}','${data.monthval}','${data.payment}','${data.category}','${data.product}','${data.amount}')">Edit user</button>
+                             </li>`
+  firstNode.innerHTML = firstNode.innerHTML + inputData; 
+  }
+   function editDetails(liId, month, payement, category, product,amount){
+     document.getElementById('month').value = month;
+     document.getElementById('mode').value = payement;
+     document.getElementById('type').value = category;
+     document.getElementById('product').value = product;
+     document.getElementById('cost').value = amount;
+     
+     deleteUser(liId);
+  }
+
+  window.addEventListener('DOMContentLoaded', ()=>{
+    axios.get("http://localhost:3000/data/").then((response)=>{
+   for(var i =0;i<response.data.newdataentry.length;i++){
+    showUser(response.data.newdataentry[i])
+   }
+
+    }).catch(err=>console.log(err))
+  })
+
+  function deleteUser(prodId){
+    axios.delete(`http://localhost:3000/${prodId}`)
+  removeFromScreen(prodId);
+
+  }
+  function removeFromScreen(listId){
+ const Node = document.getElementById('list');
+  const nodeTobeDeleted = document.getElementById(listId);
+
+  if(nodeTobeDeleted){
+    Node.removeChild(nodeTobeDeleted)
+  }
+}
+    
+    </script>
+    </body>
+</html>

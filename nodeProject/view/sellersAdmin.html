@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css.css">
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+</head>
+<body>
+    <div class="row">
+        <div class="mx-auto col-8 col-md-6 col-lg-4">
+          <form action="/" method="POST" class ="mx-auto" id = "formText">
+            <h1>SellersAdmin Page</h1>
+            <div class="form-group">
+              <label for="product" name="product">ProductName</label>
+              <select name="product" id="product" class ="form-control">
+                  <option value="none"> </option>
+              <option value="NikonCamera">NikonCamera</option>
+              <option value="laptop">Laptop</option>
+              <option value="polaroid">Polaroid</option>
+              <option value="samrtphone">Smartphones</option>
+              <option value="smartwatch">SmartWatch</option>
+                </select>
+          </div>
+            <div class="form-group">
+                <label for="amount" name="amount">Amount</label>
+                <input type="text" id="amount" class ="form-control" name="amount">
+            </div>
+         
+            <button  onclick="hello(event)" class="btn btn-primary btn-customized mt-4">AddProducts</button>  
+        
+      </form>
+        </div>
+    </div>
+    <h4>ListOfProducts</h4>
+      <ul id="list"></ul>
+
+    <!--<ul class="listVal">
+     <li class="item">Item 1</li>
+     <li class="item">Item 2</li>
+     <li class="item">Item 3</li>
+   </ul>--> 
+   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+       function hello(event){
+       event.preventDefault()
+    console.log(event.target.form.amount.value)
+        const product = event.target.form.product.value;
+        const cost = event.target.form.amount.value;
+       
+        
+        const obj = {
+          product,
+          cost
+        }
+        //console.log(obj);
+        axios.post("http://localhost:3000",obj).then((response)=>{
+         //console.log(response.data.newEntryInserted);
+         showUser(response.data.newEntryInserted);
+
+        }).catch((err)=>{
+        document.body.innerHTML = document.body.innerHTML + "<h3> Something Went Wrong </h3>";
+       console.log(err)});
+       }
+
+       function showUser(data){
+        console.log("&&",data);
+    user ={
+      id: '',
+      product: '',
+      cost: ''
+    }
+    document.getElementById('product').value= "";
+      document.getElementById('amount').value= "";
+      if(localStorage.getItem(data.date) != null){
+        removeUserFromScreen(data.date);
+      }
+      const firstNode = document.getElementById('list');
+      const inputData= `<li id=${data.id}> ${data.product} - ${data.amount}>
+                             <button onclick="deleteUser('${data.id}')">Delete user</button>
+                             </li>`
+  firstNode.innerHTML = firstNode.innerHTML + inputData; 
+  }
+   function editDetails(liId, product,cost){
+     document.getElementById('product').value = product;
+     document.getElementById('amount').value = cost;
+     
+     deleteUser(liId);
+  }
+
+  window.addEventListener('DOMContentLoaded', ()=>{
+    axios.get("http://localhost:3000/data/").then((response)=>{
+      console.log("***",response);
+   for(var i =0;i<response.data.newdataentry.length;i++){
+    showUser(response.data.newdataentry[i])
+   }
+
+    }).catch(err=>console.log(err))
+  })
+
+  window.addEventListener('DOMContentLoaded', ()=>{
+    axios.get("http://localhost:3000/sum/").then((response)=>{
+      console.log("****&&&",response);
+  // for(var i =0;i<response.data.newdataentry.length;i++){
+    //showUser(response.data.newdataentry[i])
+   });
+
+   // }).catch(err=>console.log(err))
+  });
+
+  function deleteUser(prodId){
+    axios.delete(`http://localhost:3000/${prodId}`)
+  removeFromScreen(prodId);
+
+  }
+  function removeFromScreen(listId){
+ const Node = document.getElementById('list');
+  const nodeTobeDeleted = document.getElementById(listId);
+
+  if(nodeTobeDeleted){
+    Node.removeChild(nodeTobeDeleted)
+  }
+}
+    
+    </script>
+    </body>
+</html>
